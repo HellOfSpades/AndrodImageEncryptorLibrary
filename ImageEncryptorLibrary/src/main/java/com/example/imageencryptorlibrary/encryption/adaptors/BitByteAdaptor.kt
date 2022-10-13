@@ -1,5 +1,7 @@
 package com.example.imageencryptorlibrary.encryption.adaptors
 
+import java.lang.IllegalArgumentException
+
 /**
  * author: HellOfSpades
  * adapter between bit and byte arrays
@@ -38,6 +40,21 @@ class BitByteAdaptor {
                 bytes[i] = b.toByte()
             }
             return bytes
+        }
+
+        /**
+         * converts an array of bits, into a single byte
+         * @param bits
+         * @return byte
+         */
+        public fun bitArrayToByte(bits: BooleanArray): Byte {
+            if(bits.size!=8)throw IllegalArgumentException()
+
+            var b: Int = -128
+            for (j in 7 downTo 0) {
+                b += if (bits[8 - j - 1]) Math.pow(2.0, j.toDouble()).toInt() else 0
+            }
+            return b.toByte()
         }
     }
 }

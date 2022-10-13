@@ -31,5 +31,40 @@ abstract class ImageEncoder(ogImage: Bitmap) {
 
     abstract fun decryptToBits(): BooleanArray
 
+    open fun decryptToByteIterator(): Iterator<Byte> {
+        return object :Iterator<Byte>{
+            var bitsIterator = decryptToBitsIterator()
+            var nextByte: Byte?
+            init {
+                nextByte = getNextByteFromIterator()
+            }
+
+            override fun hasNext(): Boolean {
+                return nextByte!=null
+            }
+
+            override fun next(): Byte {
+                var output = nextByte!!
+                nextByte = getNextByteFromIterator()
+                return output
+            }
+
+            private fun getNextByteFromIterator(): Byte?{
+                var bits: BooleanArray = BooleanArray(8)
+                var index = 0
+                while (bitsIterator.hasNext() && index<bits.size){
+                    bits[index] = bitsIterator.next()
+                    index++
+                }
+
+                if(index<7)return null
+                else return BitByteAdaptor.bitArrayToByte(bits)
+            }
+
+        }
+    }
+
+    abstract fun decryptToBitsIterator(): Iterator<Boolean>
+
     abstract fun getBitCapacity(): Int
 }

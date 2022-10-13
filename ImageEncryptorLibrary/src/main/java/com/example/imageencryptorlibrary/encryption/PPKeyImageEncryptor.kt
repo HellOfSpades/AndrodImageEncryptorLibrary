@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import com.example.imageencryptorlibrary.encryption.imageencoder.ImageEncoder
 import com.example.imageencryptorlibrary.encryption.imageencoder.PerColourEncoder
 import com.example.imageencryptorlibrary.encryption.imageencoder.TooManyBitsException
+import timber.log.Timber
 import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -22,6 +23,14 @@ class PPKeyImageEncryptor: ImageEncryptor {
 
     private var privateKey: RSAPrivateKey? = null
     private var publicKey: RSAPublicKey? = null
+
+    fun getPrivateKey(): RSAPrivateKey?{
+        return privateKey
+    }
+    fun getPublicKey(): RSAPublicKey?{
+        return publicKey
+    }
+
 
     fun makeKeyPair(keySize: Int) {
         try {
@@ -124,12 +133,15 @@ class PPKeyImageEncryptor: ImageEncryptor {
         if (privateKey == null) throw UnsupportedOperationException()
         try {
             val imageEncoder = createImageEncoder(image)
-            val decodedMessage = imageEncoder.decryptToBytes()
             val encryptedAesParametersAndMessageLength =
                 ByteArray(publicKey!!.modulus.toByteArray().size - 1)
+
+            val imageByteIterator = imageEncoder.decryptToByteIterator()
+            //changed to iterator
             for (i in encryptedAesParametersAndMessageLength.indices) {
-                encryptedAesParametersAndMessageLength[i] = decodedMessage[i]
+                encryptedAesParametersAndMessageLength[i] = imageByteIterator.next()
             }
+
             val rsaCipher = Cipher.getInstance("RSA")
             rsaCipher.init(Cipher.DECRYPT_MODE, privateKey)
             val rsaDecoded = rsaCipher.doFinal(encryptedAesParametersAndMessageLength)
@@ -141,12 +153,14 @@ class PPKeyImageEncryptor: ImageEncryptor {
             for (i in messageLength.indices) {
                 messageLength[i] = rsaDecoded[i + aesParameters.size]
             }
+
             val length = ByteBuffer.wrap(messageLength).order(ByteOrder.LITTLE_ENDIAN).int
             val aesEncryptor = AesEncryptor(aesParameters)
+            //bytes of the encryptedMessage
             val encryptedMessage = ByteArray(length)
+            //changed to iterator
             for (i in 0 until length) {
-                encryptedMessage[i] =
-                    decodedMessage[i + encryptedAesParametersAndMessageLength.size]
+                encryptedMessage[i] = imageByteIterator.next()
             }
             return aesEncryptor.decrypt(encryptedMessage)
         } catch (e: NoSuchAlgorithmException) {
@@ -194,6 +208,7 @@ class PPKeyImageEncryptor: ImageEncryptor {
     private fun createImageEncoder(image: Bitmap): ImageEncoder {
         return PerColourEncoder(image)
     }
+
 
     /**
      * This class is used to code the message itself

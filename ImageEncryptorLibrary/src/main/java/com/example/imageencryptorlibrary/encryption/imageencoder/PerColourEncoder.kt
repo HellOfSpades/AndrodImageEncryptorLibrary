@@ -71,6 +71,43 @@ class PerColourEncoder(image: Bitmap) : ImageEncoder(image) {
         return bits
     }
 
+    override fun decryptToBitsIterator(): Iterator<Boolean> {
+        return object :Iterator<Boolean>{
+
+            var x = 0
+            var y = 0
+            var colourIndex = 0
+            @RequiresApi(Build.VERSION_CODES.Q)
+            var rgb: IntArray = colorToIntArray(Color.valueOf(image.getPixel(x,y)))
+
+            override fun hasNext(): Boolean {
+                return !(x==image.width-1 && y==image.height-1 && colourIndex==2)
+            }
+
+            @RequiresApi(Build.VERSION_CODES.Q)
+            override fun next(): Boolean {
+
+                var output = getColourBit(rgb[colourIndex])
+
+                //increment the colour index, or if it reached the end, change to the next pixels rgb
+                if(colourIndex==2){
+                    x++
+                    if(x==image.width){
+                        x = 0;
+                        y++;
+                    }
+                    rgb = colorToIntArray(Color.valueOf(image.getPixel(x,y)))
+                    colourIndex = 0
+                }else{
+                    colourIndex++
+                }
+
+                return output
+            }
+
+        }
+    }
+
     /**
      * returns the max number of bits that the provided image can hold
      */
