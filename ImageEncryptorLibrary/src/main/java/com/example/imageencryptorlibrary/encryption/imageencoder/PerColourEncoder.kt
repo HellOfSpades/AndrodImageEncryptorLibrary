@@ -2,6 +2,7 @@ package com.example.imageencryptorlibrary.encryption.imageencoder
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.ColorSpace
 import android.os.Build
 import androidx.annotation.RequiresApi
 
@@ -11,16 +12,16 @@ class PerColourEncoder(image: Bitmap) : ImageEncoder(image) {
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun colorToIntArray(color: Color): IntArray{
         var rgb = IntArray(4)
-        rgb[0] = color.red().toInt()
-        rgb[1] = color.green().toInt()
-        rgb[2] = color.blue().toInt()
+        rgb[0] = (color.red()*255).toInt()
+        rgb[1] = (color.green()*255).toInt()
+        rgb[2] = (color.blue()*255).toInt()
         rgb[3] = color.alpha().toInt()
         return rgb
     }
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun intArrayToColor(rgb: IntArray): Color{
         if(rgb.size<4)throw IllegalArgumentException()
-        var color = Color.valueOf(rgb[0].toFloat(),rgb[1].toFloat(),rgb[2].toFloat(),rgb[3].toFloat())
+        var color = Color.valueOf(rgb[0].toFloat()/255,rgb[1].toFloat()/255,rgb[2].toFloat()/255,rgb[3].toFloat())
         return color
     }
 
