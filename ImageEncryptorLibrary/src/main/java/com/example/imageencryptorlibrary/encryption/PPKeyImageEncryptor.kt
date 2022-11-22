@@ -157,6 +157,7 @@ class PPKeyImageEncryptor: ImageEncryptor {
             val length = ByteBuffer.wrap(messageLength).order(ByteOrder.LITTLE_ENDIAN).int
             val aesEncryptor = AesEncryptor(aesParameters)
             //bytes of the encryptedMessage
+            //TODO Make sure this doesn't result in an error when a wrong image is being decrypted
             val encryptedMessage = ByteArray(length)
             //changed to iterator
             for (i in 0 until length) {
