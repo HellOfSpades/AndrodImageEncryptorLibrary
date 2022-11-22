@@ -12,7 +12,6 @@ class PerColourEncoder(image: Bitmap) : ImageEncoder(image) {
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun colorToIntArray(color: Color): IntArray{
         var rgb = IntArray(4)
-        val colorSpace = ColorSpace.get(ColorSpace.Named.SRGB)
         rgb[0] = (color.red()*255).toInt()
         rgb[1] = (color.green()*255).toInt()
         rgb[2] = (color.blue()*255).toInt()
