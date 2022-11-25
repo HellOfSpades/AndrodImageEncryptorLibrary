@@ -8,19 +8,17 @@ import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.graphics.blue
-import androidx.core.graphics.get
 import androidx.core.graphics.green
 import androidx.core.graphics.red
 import androidx.lifecycle.AndroidViewModel
 import com.example.imageencryptorlibrary.encryption.PPKeyImageEncryptor
-import com.example.imageencryptorlibrary.encryption.imageencoder.CantDecryptImageException
+import com.example.imageencryptorlibrary.encryption.CantDecryptImageException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.InputStream
-import java.net.URL
 
 /**
  * this is used for testing the library
