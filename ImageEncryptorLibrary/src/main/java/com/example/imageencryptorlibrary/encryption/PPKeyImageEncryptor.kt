@@ -52,8 +52,6 @@ class PPKeyImageEncryptor: ImageEncryptor {
                 factory.generatePublic(RSAPublicKeySpec(modulus, publicExponent)) as RSAPublicKey
         } catch (e: NoSuchAlgorithmException) {
             e.printStackTrace()
-        } catch (e: InvalidKeySpecException) {
-            e.printStackTrace()
         }
     }
 
@@ -72,8 +70,6 @@ class PPKeyImageEncryptor: ImageEncryptor {
                 )
             ) as RSAPrivateKey
         } catch (e: NoSuchAlgorithmException) {
-            e.printStackTrace()
-        } catch (e: InvalidKeySpecException) {
             e.printStackTrace()
         }
     }
