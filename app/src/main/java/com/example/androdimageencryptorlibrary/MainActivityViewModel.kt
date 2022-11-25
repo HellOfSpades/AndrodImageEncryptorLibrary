@@ -13,6 +13,7 @@ import androidx.core.graphics.green
 import androidx.core.graphics.red
 import androidx.lifecycle.AndroidViewModel
 import com.example.imageencryptorlibrary.encryption.PPKeyImageEncryptor
+import com.example.imageencryptorlibrary.encryption.imageencoder.CantDecryptImageException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -56,11 +57,13 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
                         "Three lineages, the geckos, anoles, and chameleons, have modified the scales under their toes to form adhesive pads, highly prominent in the first two groups. The pads are composed of millions of tiny setae (hair-like structures) which fit closely to the substrate to adhere using van der Waals forces; no liquid adhesive is needed.[9] In addition, the toes of chameleons are divided into two opposed groups on each foot (zygodactyly), enabling them to perch on branches as birds do.[a][6]"
 
                 var encryptedBitmap = imageEncryptor.encrypt(message.toByteArray(), imageBitmap)!!
-                var decryptedMessage = String(imageEncryptor.decrypt(encryptedBitmap)!!)
-                
-                compareBitmaps(imageBitmap, encryptedBitmap)
-                Timber.i(decryptedMessage)
-                Timber.i(if(message==decryptedMessage) "message was decrypted correctly" else "message was not decrypted correctly")
+                try {
+                    var decryptedMessage = String(imageEncryptor.decrypt(imageBitmap)!!)
+                    Timber.i(decryptedMessage)
+                }catch (e: CantDecryptImageException){
+                    Timber.i("image could not be decrypted")
+                }
+
             }
         }
     }
