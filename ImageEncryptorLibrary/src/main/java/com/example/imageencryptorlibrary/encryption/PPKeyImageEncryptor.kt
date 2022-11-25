@@ -1,11 +1,9 @@
 package com.example.imageencryptorlibrary.encryption
 
 import android.graphics.Bitmap
-import com.example.imageencryptorlibrary.encryption.imageencoder.CantDecryptImageException
 import com.example.imageencryptorlibrary.encryption.imageencoder.ImageEncoder
 import com.example.imageencryptorlibrary.encryption.imageencoder.PerColourEncoder
 import com.example.imageencryptorlibrary.encryption.imageencoder.TooManyBitsException
-import timber.log.Timber
 import java.lang.Exception
 import java.math.BigInteger
 import java.nio.ByteBuffer

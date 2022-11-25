@@ -2,7 +2,6 @@ package com.example.imageencryptorlibrary.encryption.imageencoder
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.ColorSpace
 import android.os.Build
 import androidx.annotation.RequiresApi
 
