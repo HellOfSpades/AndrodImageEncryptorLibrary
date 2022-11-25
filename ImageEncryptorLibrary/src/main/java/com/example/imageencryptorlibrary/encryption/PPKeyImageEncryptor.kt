@@ -1,10 +1,12 @@
 package com.example.imageencryptorlibrary.encryption
 
 import android.graphics.Bitmap
+import com.example.imageencryptorlibrary.encryption.imageencoder.CantDecryptImageException
 import com.example.imageencryptorlibrary.encryption.imageencoder.ImageEncoder
 import com.example.imageencryptorlibrary.encryption.imageencoder.PerColourEncoder
 import com.example.imageencryptorlibrary.encryption.imageencoder.TooManyBitsException
 import timber.log.Timber
+import java.lang.Exception
 import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -17,6 +19,7 @@ import java.security.spec.RSAPublicKeySpec
 import javax.crypto.*
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
+import kotlin.jvm.Throws
 
 
 class PPKeyImageEncryptor: ImageEncryptor {
@@ -129,7 +132,8 @@ class PPKeyImageEncryptor: ImageEncryptor {
         return null
     }
 
-    override fun decrypt(image: Bitmap): ByteArray? {
+    @Throws(CantDecryptImageException::class)
+    override fun decrypt(image: Bitmap): ByteArray{
         if (privateKey == null) throw UnsupportedOperationException()
         try {
             val imageEncoder = createImageEncoder(image)
@@ -156,27 +160,20 @@ class PPKeyImageEncryptor: ImageEncryptor {
 
             val length = ByteBuffer.wrap(messageLength).order(ByteOrder.LITTLE_ENDIAN).int
             val aesEncryptor = AesEncryptor(aesParameters)
+            //check if the device can handle creating a byte array fo this size
+            val runtime = Runtime.getRuntime()
+            if(runtime.freeMemory()<=length)throw CantDecryptImageException()
             //bytes of the encryptedMessage
-            //TODO Make sure this doesn't result in an error when a wrong image is being decrypted
             val encryptedMessage = ByteArray(length)
             //changed to iterator
             for (i in 0 until length) {
                 encryptedMessage[i] = imageByteIterator.next()
             }
             return aesEncryptor.decrypt(encryptedMessage)
-        } catch (e: NoSuchAlgorithmException) {
-            e.printStackTrace()
-        } catch (e: NoSuchPaddingException) {
-            e.printStackTrace()
-        } catch (e: InvalidKeyException) {
-            e.printStackTrace()
-        } catch (e: IllegalBlockSizeException) {
-            e.printStackTrace()
-        } catch (e: BadPaddingException) {
-            e.printStackTrace()
+        }catch (e: Exception){
+            //.printStackTrace()
+            throw CantDecryptImageException()
         }
-
-        return null
     }
     /**
      *
